@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Сидни Шоп</title>
+    <title>Sidney Shop</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -70,7 +70,6 @@
         .product-card:active { transform: scale(0.95); }
         .product-card.selected { border-color: #f5deb3; box-shadow: 0 0 15px rgba(245, 222, 179, 0.4); }
 
-        /* Градиенты */
         .card-blonde { background: linear-gradient(135deg, #e6c280, #c99b5a); color: #2b1d15; }
         .card-brown { background: linear-gradient(135deg, #8b5a2b, #5c3a21); color: #f5deb3; }
         .card-mocha { background: linear-gradient(135deg, #a67c52, #7a5c3d); color: #fff; }
@@ -84,7 +83,6 @@
         }
         .card-blonde .product-price { background: rgba(255, 255, 255, 0.4); }
         
-        /* Кнопка */
         .bottom-button {
             position: fixed; bottom: 20px; left: 16px; right: 16px;
             background: linear-gradient(135deg, #c99b5a, #8b5a2b);
@@ -113,7 +111,6 @@
         tg.ready();
         tg.expand();
 
-        // Полный список товаров с ценами
         const catalogData = [
             {
                 title: "📱 Аккаунты (Смена номера)",
@@ -149,7 +146,6 @@
         let selectedElement = null;
         const catalogDiv = document.getElementById('catalog');
 
-        // Рендер каталога
         catalogData.forEach(category => {
             const title = document.createElement('div');
             title.className = 'category-title';
@@ -161,13 +157,11 @@
 
             category.items.forEach(product => {
                 const card = document.createElement('div');
-                card.className = `product-card ${product.color}`;
+                card.className = 'product-card ' + product.color;
                 card.onclick = () => selectProduct(product.id, card);
-                card.innerHTML = `
-                    <div class="product-emoji">${product.emoji}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">${product.price} ₽</div>
-                `;
+                card.innerHTML = '<div class="product-emoji">' + product.emoji + '</div>' +
+                                 '<div class="product-name">' + product.name + '</div>' +
+                                 '<div class="product-price">' + product.price + ' ₽</div>';
                 grid.appendChild(card);
             });
             catalogDiv.appendChild(grid);
@@ -182,16 +176,18 @@
             const btn = document.getElementById('buyBtn');
             btn.classList.add('show');
             
-            // Ищем название для кнопки
             let pName = "";
-            catalogData.forEach(c => c.items.forEach(i => { if(i.id === id) pName = i.name; }));
-            btn.textContent = `Купить ${pName}`;
+            catalogData.forEach(function(c) {
+                c.items.forEach(function(i) {
+                    if(i.id === id) pName = i.name;
+                });
+            });
+            btn.textContent = 'Купить ' + pName;
         }
 
         function buySelected() {
             if (!selectedProductId) return;
             
-            // Отправляем ID товара прямо в Python-бота
             tg.sendData(JSON.stringify({ 
                 action: "buy", 
                 item_id: selectedProductId 
